@@ -63,7 +63,7 @@
         </svg>
       </button>
 
-      <p class="tip">首次使用？请联系班主任或学校管理员开通账号</p>
+      <p class="tip">首次使用？<button class="inline-link" type="button" @click="$router.push('/register')">立即注册</button></p>
     </div>
   </div>
 </template>
@@ -429,6 +429,17 @@ async function doLogin() {
   font-size: 12px;
   color: #9aa3b5;
   letter-spacing: 0.5px;
+}
+
+.inline-link {
+  margin-left: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #2f6fe4;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
 }
 
 /* ---------- 响应式 ---------- */

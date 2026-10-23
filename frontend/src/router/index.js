@@ -8,7 +8,12 @@ const routes = [
   { path: '/', component: MainLayout, children: [
     { path: '', name: 'home', component: () => import('../views/HomeView.vue') },
     { path: 'login', name: 'login', component: () => import('../views/LoginView.vue') },
+    { path: 'register', name: 'register', component: () => import('../views/RegisterView.vue') },
+    { path: 'help', name: 'help', component: () => import('../views/PlaceholderView.vue'), meta: { title: '系统帮助' } },
   ]},
+  { path: '/practice', redirect: '/student/practice/music' },
+  { path: '/analysis', redirect: '/student/curve' },
+  { path: '/profile', redirect: '/student/profile' },
   {
     path: '/student',
     component: StudentLayout,
@@ -18,6 +23,8 @@ const routes = [
       { path: 'class', name: 'student-class', component: () => import('../views/PlaceholderView.vue'), meta: { title: '我的班级' } },
       { path: 'practice/music', component: () => import('../views/PlaceholderView.vue'), meta: { title: '音乐测评练习' } },
       { path: 'practice/art', component: () => import('../views/PlaceholderView.vue'), meta: { title: '美术测评练习' } },
+      { path: 'practice/dance', component: () => import('../views/PlaceholderView.vue'), meta: { title: '舞蹈测评练习' } },
+      { path: 'practice/general', component: () => import('../views/PlaceholderView.vue'), meta: { title: '综合测评' } },
       { path: 'official/music', component: () => import('../views/PlaceholderView.vue'), meta: { title: '音乐正式测评' } },
       { path: 'official/art', component: () => import('../views/PlaceholderView.vue'), meta: { title: '美术正式测评' } },
       { path: 'results', component: () => import('../views/PlaceholderView.vue'), meta: { title: '测评记录' } },

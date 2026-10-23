@@ -37,7 +37,8 @@
             </svg>
             <input type="text" placeholder="搜索功能、内容..." />
           </label>
-          <router-link to="/login" class="btn btn-outline">登录 / 注册</router-link>
+          <button type="button" class="btn btn-outline" @click="showLoginModal = true">登录</button>
+          <router-link to="/register" class="btn btn-outline">注册</router-link>
         </div>
       </div>
     </header>
@@ -45,6 +46,21 @@
     <main class="main">
       <router-view />
     </main>
+
+    <BaseModal v-model="showLoginModal" title="登录" subtitle="请输入账号和密码后进入系统" width="420px">
+      <form class="login-modal-form" @submit.prevent="submitLoginModal">
+        <label class="login-field">
+          <span>账号</span>
+          <input v-model="loginForm.username" type="text" placeholder="请输入账号" />
+        </label>
+        <label class="login-field">
+          <span>密码</span>
+          <input v-model="loginForm.password" type="password" placeholder="请输入密码" />
+        </label>
+        <p v-if="loginError" class="login-error">{{ loginError }}</p>
+        <button class="login-submit" type="submit">进入系统</button>
+      </form>
+    </BaseModal>
 
     <!-- 与主页一致的页脚 -->
     <footer class="footer">
@@ -72,20 +88,43 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import BaseModal from '../components/BaseModal.vue'
+
 const route = useRoute()
+const router = useRouter()
+
+const showLoginModal = ref(false)
+const loginForm = ref({ username: '', password: '' })
+const loginError = ref('')
 
 const navItems = [
   { name: '首页', path: '/' },
-  { name: '测评练习', path: '/login?role=student' },
-  { name: '成绩分析', path: '/login?role=student' },
-  { name: '个人中心', path: '/login?role=student' },
-  { name: '系统帮助', path: '/' },
+  { name: '测评练习', path: '/practice' },
+  { name: '成绩分析', path: '/analysis' },
+  { name: '个人中心', path: '/profile' },
+  { name: '系统帮助', path: '/help' },
 ]
 
 function isActive(p) {
   if (p === '/') return route.path === '/'
   return route.path.startsWith(p.split('?')[0])
+}
+
+function submitLoginModal() {
+  const username = loginForm.value.username.trim()
+  const password = loginForm.value.password.trim()
+
+  if (!username || !password) {
+    loginError.value = '请输入账号和密码后再登录。'
+    return
+  }
+
+  loginError.value = ''
+  showLoginModal.value = false
+  loginForm.value = { username: '', password: '' }
+  router.push('/student/dashboard')
 }
 </script>
 
@@ -116,7 +155,51 @@ function isActive(p) {
 .header-right { display: flex; align-items: center; gap: 14px; }
 .search { display: flex; align-items: center; gap: 6px; background: #f3f5f9; border-radius: 18px; padding: 7px 14px; }
 .search input { border: none; outline: none; background: transparent; font-size: 13px; width: 130px; color: #4a5568; }
-.btn-outline { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; padding: 7px 16px; border-radius: 18px; border: 1px solid #c9d6ee; color: #2f6fe4; background: #fff; }
+.btn-outline { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; padding: 7px 16px; border-radius: 18px; border: 1px solid #c9d6ee; color: #2f6fe4; background: #fff; cursor: pointer; }
+
+.login-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: #5c6a80;
+}
+.login-field input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #dfe7f5;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #1f2a44;
+  background: #fff;
+  outline: none;
+  box-sizing: border-box;
+}
+.login-field input:focus {
+  border-color: #8ab7ff;
+  box-shadow: 0 0 0 3px rgba(79, 156, 249, 0.12);
+}
+.login-error {
+  margin: 0;
+  font-size: 12px;
+  color: #d94a4a;
+}
+.login-submit {
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(90deg, #3f8ef7, #7b6cf0);
+  cursor: pointer;
+}
 
 .main { flex: 1; }
 .footer { background: #fff; border-top: 1px solid #eef1f6; margin-top: auto; }

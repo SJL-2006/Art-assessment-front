@@ -1,59 +1,5 @@
 <template>
   <div class="page">
-    <!-- 顶部导航 -->
-    <header class="header">
-      <div class="header-inner">
-        <div class="logo">
-          <span class="logo-icon">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
-              <path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.2 0-1.1.9-2 2-2h2.3A4.7 4.7 0 0 0 22 10.8C21.9 5.9 17.4 2 12 2Z" fill="url(#lg)"/>
-              <circle cx="7.5" cy="10.5" r="1.4" fill="#fff"/>
-              <circle cx="12" cy="7.5" r="1.4" fill="#fff"/>
-              <circle cx="16.5" cy="10.5" r="1.4" fill="#fff"/>
-              <defs>
-                <linearGradient id="lg" x1="0" y1="0" x2="24" y2="24">
-                  <stop stop-color="#4f9cf9"/><stop offset=".5" stop-color="#a06ee8"/><stop offset="1" stop-color="#f2709c"/>
-                </linearGradient>
-              </defs>
-            </svg>
-          </span>
-          <span class="logo-text">{{ data.siteName }}</span>
-        </div>
-
-        <nav class="nav">
-          <a
-            v-for="item in data.nav"
-            :key="item.name"
-            :href="item.path"
-            class="nav-item"
-            :class="{ active: item.active }"
-            @click.prevent="setActive(item)"
-          >{{ item.name }}</a>
-        </nav>
-
-        <div class="header-right">
-          <label class="search">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#9aa3b2" stroke-width="2" stroke-linecap="round">
-              <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
-            </svg>
-            <input type="text" placeholder="搜索功能、内容..." />
-          </label>
-          <button class="btn btn-ghost">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/>
-            </svg>
-            登录
-          </button>
-          <button class="btn btn-outline">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
-            </svg>
-            注册
-          </button>
-        </div>
-      </div>
-    </header>
-
     <!-- 英雄区 -->
     <section class="hero">
       <div class="hero-inner">
@@ -67,7 +13,7 @@
           <h1 class="hero-title">{{ data.hero.title }}</h1>
           <p class="hero-subtitle">{{ data.hero.subtitle }}</p>
           <p class="hero-desc">{{ data.hero.description }}</p>
-          <button class="hero-btn">
+          <button class="hero-btn" @click="$router.push('/login?role=student')">
             {{ data.hero.buttonText }}
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>
@@ -80,7 +26,16 @@
     <!-- 功能卡片 -->
     <section class="features">
       <div class="features-inner">
-        <div v-for="card in data.features" :key="card.key" class="card">
+        <div
+          v-for="card in data.features"
+          :key="card.key"
+          class="card"
+          role="link"
+          tabindex="0"
+          @click="openFeature(card)"
+          @keydown.enter="openFeature(card)"
+          @keydown.space.prevent="openFeature(card)"
+        >
           <div class="card-icon" :style="{ background: card.color + '1f', color: card.color }">
             <!-- 调色板 -->
             <svg v-if="card.icon === 'palette'" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
@@ -121,34 +76,15 @@
       </div>
     </section>
 
-    <!-- 页脚 -->
-    <footer class="footer">
-      <div class="footer-inner">
-        <div class="footer-left">
-          <span class="logo-icon small">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-              <path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.2 0-1.1.9-2 2-2h2.3A4.7 4.7 0 0 0 22 10.8C21.9 5.9 17.4 2 12 2Z" fill="url(#lg2)"/>
-              <circle cx="7.5" cy="10.5" r="1.4" fill="#fff"/>
-              <circle cx="12" cy="7.5" r="1.4" fill="#fff"/>
-              <circle cx="16.5" cy="10.5" r="1.4" fill="#fff"/>
-              <defs>
-                <linearGradient id="lg2" x1="0" y1="0" x2="24" y2="24">
-                  <stop stop-color="#4f9cf9"/><stop offset=".5" stop-color="#a06ee8"/><stop offset="1" stop-color="#f2709c"/>
-                </linearGradient>
-              </defs>
-            </svg>
-          </span>
-          <span>{{ data.slogan }}</span>
-        </div>
-        <div class="footer-right">—— {{ data.siteName }} ——</div>
-      </div>
-    </footer>
   </div>
 </template>
 
 <script setup>
 import { onMounted, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import { api } from '../api'
+
+const router = useRouter()
 
 // 默认数据（后端未启动时也能正常渲染，启动后由接口数据覆盖）
 const data = reactive({
@@ -178,9 +114,25 @@ const data = reactive({
   ]
 })
 
-function setActive(item) {
+function navigateTo(item) {
   data.nav.forEach(n => (n.active = false))
   item.active = true
+  if (item.path) {
+    router.push(item.path)
+  }
+}
+
+function openFeature(card) {
+  const destinations = {
+    art: '/student/practice/art',
+    music: '/student/practice/music',
+    dance: '/student/practice/dance',
+    general: '/student/practice/general',
+    analysis: '/student/curve',
+    report: '/student/certificate',
+  }
+
+  router.push(destinations[card.key] || '/login?role=student')
 }
 
 onMounted(async () => {
